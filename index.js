@@ -9,6 +9,13 @@ connect();
 
 const app = express();
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Permet à tous les domaines d'accéder à votre API
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'); // Les méthodes HTTP autorisées
+    res.header('Access-Control-Allow-Headers', 'Content-Type'); // Les en-têtes autorisés
+    next();
+});
+
 app.use(express.json());
 
 // Récupère les utilisateurs
@@ -16,7 +23,7 @@ app.use(express.json());
 //     res.send(users);
 // });
 const findUser = async (email) => {
-    const user = await recotify.find({
+    const user = await User.findOne({
         email:email
     });
 
@@ -24,15 +31,15 @@ const findUser = async (email) => {
 }
 
 // Récupérer 1 utilisateur
-app.get('/users/:email', async (req, res) => {
-    const { email } = req.params;
+app.post('/login', async (req, res) => {
+    const email  = req.body.email;
 
     // const idx = users.findIndex(user => user.email === email);
 
-    const user = findUser(email);
+    const user = await findUser(email);
 
     if(user)
-    return res.status(200).send({ok : true, data:user});
+    return res.status(200).send({ok : true, msg: 'Connected'});
 
     res.status(404).send({
         ok: false,
