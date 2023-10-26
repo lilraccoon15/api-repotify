@@ -10,7 +10,8 @@ module.exports = {
 
     if(user){
       const token = jwt.sign(_.pick(user, 'email'), process.env.PRIVATE_KEY);
-      return res.status(200).send({ok: true, msg: 'Connected', data: token});
+      const {artists, genres, recommendations} = user;
+      return res.status(200).send({ok: true, msg: 'Connected', data: {token, artists, genres, recommendations }});
     }
     res.status(404).send({
         ok: false,
@@ -38,14 +39,15 @@ module.exports = {
         email:req.body.email,
         picture:req.body.picture,
         artists: [],
-        genres: []
+        genres: [],
+        recommendations: [],
     }
 
     const user = new User(userData);
   
     try {
       await user.save();
-      res.status(201).send({ ok: true, msg: user });
+      res.status(201).send({ ok: true, data: user });
     } catch (err) {
         console.error(err.message);
       res.status(500).send({ ok: false, msg: 'Internal server error' });
