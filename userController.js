@@ -1,14 +1,17 @@
 const User = require("./user.model");
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
+const _ = require('underscore');
 
 module.exports = {
   login: async (req, res) => {
     const email  = req.body.email;
-    const user = await await User.findOne({ email:email });
+    const user = await User.findOne({ email:email });
 
-    if(user)
-    return res.status(200).send({ok : true, msg: 'Connected'});
-
+    if(user){
+      const token = jwt.sign(_.pick(user, 'email'), process.env.PRIVATE_KEY);
+      return res.status(200).send({ok: true, msg: 'Connected', data: token});
+    }
     res.status(404).send({
         ok: false,
         msg: 'User was not found with the given email',
@@ -53,8 +56,7 @@ module.exports = {
     try {
         const schema = Joi.object({
             name: Joi.string(),
-            email: Joi.string(),
-            picture: Joi.string()
+            picture: Joi.string(),
         })
 
         const {error} = schema.validate(req.body);
@@ -65,8 +67,9 @@ module.exports = {
                 msg: error.details[0].message,
             });
         };
-
-        const { email } = req.body;
+        const token = req.headers.authorization;
+        const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+        const email = decoded.email;
 
         let user = await User.findOne({email:email});
 
@@ -77,8 +80,6 @@ module.exports = {
         });
 
         const updatedUser = await User.findOneAndUpdate({email: email}, {$set: req.body}, { new: true });
-
-        console.log("updatedUser:", updatedUser);
 
         if(updatedUser)
         {
@@ -100,7 +101,9 @@ module.exports = {
 
   erase: async (req, res) => {
     try {
-        const { email } = req.body;
+        const token = req.headers.authorization;
+        const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+        const email = decoded.email;
 
         const user = await User.findOneAndDelete({email:email});
 

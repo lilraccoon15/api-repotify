@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 require('./connect')();
 const { login, create, update, erase } = require('./userController');
-const { add } = require('./artistsController');
+const { add, eraseArtist } = require('./artistsController');
+const { eraseGenre, addGenre } = require('./genresController');
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -14,4 +15,9 @@ app.put('/users', update);
 app.delete('/users', erase);
 
 app.post('/artists', add)
+app.delete('/artists', eraseArtist)
+
+app.post('/genres', addGenre)
+app.delete('/genres', eraseGenre)
+
 app.listen(8000, () => console.log("Listening on port 8000"));

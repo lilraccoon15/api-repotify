@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   picture: String,
   artists: [String],
   genres: [String],
-
+  recommendations: [String],
 });
 
 module.exports = mongoose.model('user', UserSchema);

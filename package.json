@@ -17,13 +17,14 @@
   },
   "homepage": "https://github.com/lilraccoon15/api-repotify#readme",
   "dependencies": {
-    "bson": "^6.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.2.0",
-    "mongoose": "^7.6.3"
+    "mongoose": "^7.6.3",
+    "underscore": "^1.13.6"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
