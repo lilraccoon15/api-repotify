@@ -10,8 +10,8 @@ module.exports = {
 
     if(user){
       const token = jwt.sign(_.pick(user, 'email'), process.env.PRIVATE_KEY);
-      const {artists, genres, recommendations} = user;
-      return res.status(200).send({ok: true, msg: 'Connected', data: {token, artists, genres, recommendations }});
+      const {name, picture, artists, genres, recommendations} = user;
+      return res.status(200).send({ok: true, msg: 'Connected', data: {token, name, picture, artists, genres, recommendations }});
     }
     res.status(404).send({
         ok: false,
