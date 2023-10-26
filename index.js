@@ -1,16 +1,12 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 require('./connect')();
 const { login, create, update, erase } = require('./userController');
 const { add } = require('./artistsController');
 const app = express();
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Permet à tous les domaines d'accéder à votre API
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE'); // Les méthodes HTTP autorisées
-    res.header('Access-Control-Allow-Headers', 'Content-Type'); // Les en-têtes autorisés
-    next();
-});
 app.use(express.json());
+app.use(cors());
 
 app.post('/login', login);
 app.post('/users', create);
