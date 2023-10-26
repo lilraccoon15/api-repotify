@@ -11,5 +11,15 @@ module.exports = {
     }
     
     res.status(500).send({ok: false, msg: 'Server error, please contact the admin'})
+  },
+
+  erase: async (req, res) => {
+    const { email } = req.body;
+    let user = await User.findOne({ email:email });
+    let idx = user.artists.findIndex(req.body.artist);
+    if (idx < 0){
+      return res.status(403).send({ok: false, msg: "Bad request"});
+    }
+    user.artists.slice(idx, 1);
   }
 }
