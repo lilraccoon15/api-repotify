@@ -4,7 +4,7 @@ const UserSchema = new mongoose.Schema({
   name: String,
   email: String,
   picture: String,
-  artists: [String],
+  artists: [],
   genres: [String],
   recommendations: [String],
 });
