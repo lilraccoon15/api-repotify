@@ -7,13 +7,17 @@ module.exports = {
     const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
     const email = decoded.email;
     let user = await User.findOne({ email:email })
-    user.artists.push(req.body.artist);
-    if (user.artists.includes(req.body.artist)) {
-      await User.findOneAndUpdate({email: email}, {$set: user}, { new: true });
-      return res.status(200).send({ok: true, msg: 'Artist added'});
+    const idx = user.artists.findIndex((artist) => JSON.stringify(artist) === JSON.stringify(req.body.artist));
+    if(idx >=0){
+      return res.status(400).send({ok: false, msg: 'Artist already add'})
     }
-    
-    res.status(500).send({ok: false, msg: 'Server error, please contact the admin'})
+    user.artists.push(req.body.artist);
+    try { 
+      await User.findOneAndUpdate({email: email}, {$set: user}, { new: true });
+    } catch {
+      return res.status(500).send({ok: false, msg: 'Server error, please contact the admin'})
+    }
+    res.status(200).send({ok: true, msg: 'Artist added'});
   },
 
   eraseArtist: async (req, res) => {
