@@ -25,7 +25,7 @@ module.exports = {
     const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
     const email = decoded.email;
     let user = await User.findOne({ email:email });
-    const idx = user.recommendations.findIndex((recommendation) => recommendation === req.body.recommendation);
+    const idx = user.recommendations.findIndex((recommendation) => JSON.stringify(recommendation) === JSON.stringify(req.body.recommendation));
     if (idx < 0){
       return res.status(403).send({ok: false, msg: "Bad request"});
     }
