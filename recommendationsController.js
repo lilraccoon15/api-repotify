@@ -7,13 +7,17 @@ module.exports = {
     const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
     const email = decoded.email;
     let user = await User.findOne({ email:email })
-    user.recommendations.push(req.body.recommendation);
-    if (user.recommendations.includes(req.body.recommendation)) {
-      await User.findOneAndUpdate({email: email}, {$set: user}, { new: true });
-      return res.status(200).send({ok: true, msg: 'recommendation added'});
+    const idx = user.recommendations.findIndex((recommendation) => JSON.stringify(recommendation) === JSON.stringify(req.body.recommendation));
+    if(idx >=0){
+      return res.status(400).send({ok: false, msg: 'recommendation already add'})
     }
-    
-    res.status(500).send({ok: false, msg: 'Server error, please contact the admin'})
+    user.recommendations.push(req.body.recommendation);
+    try { 
+      await User.findOneAndUpdate({email: email}, {$set: user}, { new: true });
+    } catch {
+      return res.status(500).send({ok: false, msg: 'Server error, please contact the admin'})
+    }
+    res.status(200).send({ok: true, msg: 'recommendation added'});
   },
 
   eraseReco: async (req, res) => {
